@@ -14,7 +14,7 @@ If you've ever thought, "wouldn't it be cool if GitHub could…"; I'm going to s
 **Probot is a framework for building [GitHub Apps](https://docs.github.com/en/developers/apps) in [Node.js](https://nodejs.org/)**, written in [TypeScript](https://www.typescriptlang.org/). GitHub Apps can listen to webhook events sent by a repository or organization. Probot uses its internal event emitter to perform actions based on those events. A simple Probot App might look like this:
 
 ```js
-module.exports = (app) => {
+export default (app) => {
   app.on("issues.opened", async (context) => {
     const issueComment = context.issue({
       body: "Thanks for opening this issue!",
@@ -44,7 +44,7 @@ Probot is built by people just like you! Most of the interesting things are buil
 
 If you're interested in contributing to Probot itself, check out our [contributing docs](CONTRIBUTING.md) to get started.
 
-Want to chat with Probot users and contributors? [Join us in Slack](https://probot-slackin.herokuapp.com/)!
+Want to discuss with Probot users and contributors? [Discuss on GitHub](https://github.com/probot/probot/discussions)!
 
 ## Ideas
 

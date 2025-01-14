@@ -1,20 +1,21 @@
-import { State } from "../types";
-import { ProbotOctokit } from "./probot-octokit";
+import type { State } from "../types.js";
+import type { ProbotOctokit } from "./probot-octokit.js";
+import type { OctokitOptions } from "../types.js";
+import type { LogFn, Level, Logger } from "pino";
+import { rebindLog } from "../helpers/rebind-log.js";
 
 type FactoryOptions = {
-  octokit: InstanceType<typeof ProbotOctokit>;
-  octokitOptions: ConstructorParameters<typeof ProbotOctokit> & {
-    throttle?: Record<string, unknown>;
-    auth?: Record<string, unknown>;
-  };
+  octokit: ProbotOctokit;
+  octokitOptions: OctokitOptions;
   [key: string]: unknown;
 };
 
 export async function getAuthenticatedOctokit(
   state: State,
-  installationId?: number
+  installationId?: number,
+  log?: Logger,
 ) {
-  const { log, octokit } = state;
+  const { octokit } = state;
 
   if (!installationId) return octokit;
 
@@ -22,22 +23,19 @@ export async function getAuthenticatedOctokit(
     type: "installation",
     installationId,
     factory: ({ octokit, octokitOptions, ...otherOptions }: FactoryOptions) => {
-      const pinoLog = log.child({ name: "github" });
+      const pinoLog = log || state.log.child({ name: "github" });
 
-      const options = {
+      const options: ConstructorParameters<typeof ProbotOctokit>[0] & {
+        log: Record<Level, LogFn>;
+      } = {
         ...octokitOptions,
-        log: {
-          fatal: pinoLog.fatal.bind(pinoLog),
-          error: pinoLog.error.bind(pinoLog),
-          warn: pinoLog.warn.bind(pinoLog),
-          info: pinoLog.info.bind(pinoLog),
-          debug: pinoLog.debug.bind(pinoLog),
-          trace: pinoLog.trace.bind(pinoLog),
-        },
-        throttle: {
-          ...octokitOptions.throttle,
-          id: installationId,
-        },
+        log: rebindLog(pinoLog),
+        throttle: octokitOptions.throttle?.enabled
+          ? {
+              ...octokitOptions.throttle,
+              id: String(installationId),
+            }
+          : { enabled: false },
         auth: {
           ...octokitOptions.auth,
           otherOptions,
@@ -49,5 +47,5 @@ export async function getAuthenticatedOctokit(
 
       return new Octokit(options);
     },
-  }) as Promise<InstanceType<typeof ProbotOctokit>>;
+  }) as Promise<ProbotOctokit>;
 }
