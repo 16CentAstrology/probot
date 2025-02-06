@@ -1,18 +1,18 @@
 {
-  "extends": "@tsconfig/node10/tsconfig.json",
+  "extends": "@octokit/tsconfig",
   "compilerOptions": {
+    "verbatimModuleSyntax": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
     "pretty": true,
-    "strict": true,
     "sourceMap": true,
     "outDir": "./lib",
     "skipLibCheck": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
     "declaration": true,
-    "resolveJsonModule": true
+    "allowJs": true,
+    "lib": ["es2023", "dom"]
   },
   "include": ["src/**/*"],
   "compileOnSave": false

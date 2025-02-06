@@ -1,5 +1,5 @@
 ---
-next: docs/configuration.md
+next: configuration
 title: Interacting with GitHub
 ---
 
@@ -16,7 +16,7 @@ Your Probot app has access to an authenticated [Octokit client](https://octokit.
 Here is an example of an autoresponder app that comments on opened issues:
 
 ```js
-module.exports = (app) => {
+export default (app) => {
   app.on("issues.opened", async (context) => {
     // `context` extracts information from the event, which can be passed to
     // GitHub API calls. This will return:
@@ -47,7 +47,7 @@ const addComment = `
   }
 `;
 
-module.exports = (app) => {
+export default (app) => {
   app.on("issues.opened", async (context) => {
     // Post a comment on the issue
     context.octokit.graphql(addComment, {
@@ -70,7 +70,7 @@ const pinIssue = `
   }
 `;
 
-module.exports = (app) => {
+export default (app) => {
   app.on("issues.opened", async (context) => {
     context.octokit.graphql(pinIssue, {
       id: context.payload.issue.node_id,
@@ -86,7 +86,7 @@ Check out the [GitHub GraphQL API docs](https://docs.github.com/en/graphql) to l
 
 ## Unauthenticated Events
 
-When [receiving webhook events](/docs/webhooks.md), `context.octokit` is _usually_ an authenticated client, but there are a few events that are exceptions:
+When [receiving webhook events](/docs/webhooks), `context.octokit` is _usually_ an authenticated client, but there are a few events that are exceptions:
 
 - [`installation.deleted` & `installation.suspend`](https://docs.github.com/en/developers/webhooks-and-events/webhook-events-and-payloads#installation) - The installation was _just_ deleted or suspended, so we can't authenticate as the installation.
 
@@ -102,7 +102,7 @@ If you want to run a Probot App against a GitHub Enterprise instance, you'll nee
 GHE_HOST=fake.github-enterprise.com
 ```
 
-When [using Probot programmatically](/docs/development.md#run-probot-programmatically), set the `baseUrl` option for the [`Probot`](https://probot.github.io/api/latest/classes/probot.Probot.html) constructor to the full base Url of the REST API
+When [using Probot programmatically](/docs/development/#run-probot-programmatically), set the `baseUrl` option for the [`Probot`](https://probot.github.io/api/latest/classes/probot.Probot.html) constructor to the full base Url of the REST API
 
 ```js
 const MyProbot = Probot.defaults({
